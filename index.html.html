@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Atticus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0d12;
+    --card:#141922;
+    --border:#2a3240;
+    --accent:#2d6cff;
+    --muted:#9aa4b2;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:#fff;
+    font-family:'Noto Sans Georgian', Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:90px;
+  }
+  .header{
+    padding:18px 20px;
+    font-size:22px;
+    font-weight:800;
+    border-bottom:1px solid #222;
+    position:sticky;
+    top:0;
+    background:var(--bg);
+    z-index:10;
+  }
+  .hero{padding:24px}
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:18px;
+    margin:16px 0;
+  }
+  .card h2, .card h3{margin:0 0 8px 0}
+  .card p{margin:6px 0;line-height:1.5}
+  .btn{
+    display:block;
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:14px;
+    background:var(--accent);
+    color:#fff;
+    font-size:17px;
+    font-weight:700;
+    font-family:inherit;
+    cursor:pointer;
+    transition:opacity .15s ease, transform .1s ease;
+  }
+  .btn:active{transform:scale(0.98);opacity:.85}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .metric{font-size:28px;font-weight:800}
+  .small{color:var(--muted);font-size:13px;letter-spacing:.03em}
+  .mission-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 0;
+    border-bottom:1px solid var(--border);
+    cursor:pointer;
+  }
+  .mission-item:last-child{border-bottom:none}
+  .mission-item:active{opacity:.7}
+  .nav{
+    position:fixed;
+    bottom:0;left:0;right:0;
+    background:#10141c;
+    display:flex;
+    justify-content:space-around;
+    padding:12px 0 calc(12px + env(safe-area-inset-bottom));
+    border-top:1px solid #222;
+  }
+  .nav-item{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    font-size:11px;
+    color:var(--muted);
+    cursor:pointer;
+    padding:4px 10px;
+    border-radius:10px;
+    transition:color .15s ease, background .15s ease;
+  }
+  .nav-item.active{color:#fff;background:rgba(45,108,255,.15)}
+  .nav-icon{font-size:20px}
+  .view{display:none}
+  .view.active{display:block}
+  .toast{
+    position:fixed;
+    bottom:90px;left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:#1c2330;
+    border:1px solid var(--border);
+    padding:10px 18px;
+    border-radius:12px;
+    font-size:13px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+    z-index:20;
+    white-space:nowrap;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="header">The Atticus</div>
+
+<!-- HOME VIEW -->
+<div class="view active" id="view-home">
+  <div class="hero">
+    <div class="card">
+      <div class="small">კოგნიტური ოპერაციული სისტემა</div>
+      <h2>საღამო მშვიდობისა.</h2>
+      <p>კარგად დაბრუნდი. შენი ინტელექტუალური სამუშაო სივრცე მზადაა.</p>
+      <button class="btn" onclick="showToast('სტრატეგიული სესია იწყება...')">სტრატეგიული სესიის დაწყება</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="small">ევოლუციის ქულა</div>
+        <div class="metric">87</div>
+      </div>
+      <div class="card">
+        <div class="small">გადასაწყვეტი საკითხები</div>
+        <div class="metric">4</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>მისიის კონტროლი</h3>
+      <div class="mission-item" onclick="showToast('სტრატეგიული ანალიზი')">🎯 სტრატეგიული ანალიზი</div>
+      <div class="mission-item" onclick="showToast('გადაწყვეტილებების ლაბორატორია')">🧪 გადაწყვეტილებების ლაბორატორია</div>
+      <div class="mission-item" onclick="showToast('დებატის რეჟიმი')">⚔️ დებატის რეჟიმი</div>
+      <div class="mission-item" onclick="showToast('მეხსიერების ღერძი')">🕓 მეხსიერების ღერძი</div>
+      <div class="mission-item" onclick="showToast('ცოდნის ბაზა')">📚 ცოდნის ბაზა</div>
+    </div>
+
+    <div class="card">
+      <h3>დღევანდელი ფოკუსი</h3>
+      <p>გააანალიზე შენი შემდეგი მაღალი გავლენის გადაწყვეტილება.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT VIEW -->
+<div class="view" id="view-chat">
+  <div class="hero">
+    <div class="card">
+      <div class="small">დებატის რეჟიმი</div>
+      <h2>დასვი გამოწვევა.</h2>
+      <p>აქ შენი მსჯელობა შემოწმდება — არა დადასტურდება.</p>
+      <button class="btn" onclick="showToast('მალე ხელმისაწვდომია')">საუბრის გაგრძელება</button>
+    </div>
+  </div>
+</div>
+
+<!-- MIND VIEW -->
+<div class="view" id="view-mind">
+  <div class="hero">
+    <div class="card">
+      <div class="small">სტრატეგიული ინტელექტი</div>
+      <h2>შენი აზროვნების რუკა.</h2>
+      <p>პატერნები, რომლებსაც შენ არ ამჩნევ, მაგრამ მუდმივად მართავ მათით.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="small">გადაწყვეტილების სიჩქარე</div>
+        <div class="metric">62%</div>
+      </div>
+      <div class="card">
+        <div class="small">თანმიმდევრულობა</div>
+        <div class="metric">91%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIBRARY VIEW -->
+<div class="view" id="view-library">
+  <div class="hero">
+    <div class="card">
+      <h3>ცოდნის ბაზა</h3>
+      <p>შენი ყველა გადაწყვეტილება, საუბარი და დასკვნა — ერთ ადგილზე.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS VIEW -->
+<div class="view" id="view-settings">
+  <div class="hero">
+    <div class="card">
+      <h3>პარამეტრები</h3>
+      <p class="small">ენა</p>
+      <p>🇬🇪 ქართული</p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="nav">
+  <div class="nav-item active" data-view="home" onclick="switchView('home')">
+    <span class="nav-icon">🏠</span><span>მთავარი</span>
+  </div>
+  <div class="nav-item" data-view="chat" onclick="switchView('chat')">
+    <span class="nav-icon">💬</span><span>დებატი</span>
+  </div>
+  <div class="nav-item" data-view="mind" onclick="switchView('mind')">
+    <span class="nav-icon">🧠</span><span>გონება</span>
+  </div>
+  <div class="nav-item" data-view="library" onclick="switchView('library')">
+    <span class="nav-icon">📚</span><span>ბაზა</span>
+  </div>
+  <div class="nav-item" data-view="settings" onclick="switchView('settings')">
+    <span class="nav-icon">⚙️</span><span>პარამეტრები</span>
+  </div>
+</div>
+
+<script>
+function switchView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelector('.nav-item[data-view="'+name+'"]').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+</script>
+
+</body>
+</html>
