@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="ka" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atticus — Behavioral Intelligence Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            brand: { 50:'#f0f4ff', 100:'#dde8ff', 200:'#c3d4fd', 300:'#9ab5fc',
+                     400:'#6e8ef9', 500:'#4a6cf7', 600:'#3651e4', 700:'#2c40ca',
+                     800:'#2835a5', 900:'#263083', 950:'#1a1f52' }
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.3s ease-out',
+            'slide-in': 'slideIn 0.25s ease-out',
+            'spin-slow': 'spin 1.4s linear infinite',
+          },
+          keyframes: {
+            fadeIn: { '0%': { opacity: '0', transform: 'translateY(6px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+            slideIn: { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(0)' } },
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px; }
+    .dark ::-webkit-scrollbar-thumb { background: #4a5568; }
+    html:not(.dark) ::-webkit-scrollbar-thumb { background: #cbd5e0; }
+
+    /* Markdown content */
+    .md-content p { margin: 0.5em 0; }
+    .md-content p:first-child { margin-top: 0; }
+    .md-content p:last-child { margin-bottom: 0; }
+    .md-content ul, .md-content ol { padding-left: 1.4em; margin: 0.4em 0; }
+    .md-content li { margin: 0.15em 0; }
+    .md-content code { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.85em; padding: 0.15em 0.4em; border-radius: 4px; }
+    .dark .md-content code { background: #1e293b; color: #93c5fd; }
+    html:not(.dark) .md-content code { background: #f1f5f9; color: #1e40af; }
+    .md-content pre { border-radius: 8px; overflow-x: auto; padding: 1em; margin: 0.6em 0; }
+    .dark .md-content pre { background: #0f172a; }
+    html:not(.dark) .md-content pre { background: #f8fafc; border: 1px solid #e2e8f0; }
+    .md-content pre code { background: transparent; padding: 0; color: inherit; }
+    .md-content h1,.md-content h2,.md-content h3 { font-weight: 600; margin: 0.8em 0 0.3em; }
+    .md-content h1 { font-size: 1.2em; }
+    .md-content h2 { font-size: 1.08em; }
+    .md-content h3 { font-size: 0.97em; }
+    .md-content blockquote { border-left: 3px solid #4a6cf7; padding-left: 0.8em; margin: 0.5em 0; opacity: 0.85; }
+    .md-content strong { font-weight: 600; }
+    .md-content em { font-style: italic; }
+    .md-content hr { border: none; border-top: 1px solid; margin: 0.8em 0; opacity: 0.2; }
+    .md-content a { color: #6e8ef9; text-decoration: underline; }
+    .md-content table { border-collapse: collapse; width: 100%; margin: 0.6em 0; }
+    .md-content th, .md-content td { border: 1px solid; padding: 0.4em 0.7em; text-align: left; }
+    .dark .md-content th, .dark .md-content td { border-color: #334155; }
+    html:not(.dark) .md-content th, html:not(.dark) .md-content td { border-color: #e2e8f0; }
+    .md-content th { font-weight: 600; }
+
+    /* Sidebar overlay */
+    #sidebar-overlay { display: none; }
+    #sidebar-overlay.active { display: block; }
+
+    /* Typing indicator */
+    .typing-dot { animation: typingBounce 1.2s infinite ease-in-out; }
+    .typing-dot:nth-child(1) { animation-delay: 0s; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-5px); opacity: 1; }
+    }
+
+    /* Mode pill */
+    .mode-pill { transition: all 0.2s ease; }
+
+    /* Smooth theme transition */
+    html { transition: background-color 0.2s, color 0.2s; }
+
+    /* Textarea auto-resize handle */
+    #user-input { resize: none; min-height: 44px; max-height: 160px; overflow-y: auto; }
+  </style>
+</head>
+
+<body class="dark:bg-gray-950 bg-gray-50 dark:text-gray-100 text-gray-900 h-full">
+
+<!-- ═══════════════════════════════════════════════════════
+     SIDEBAR OVERLAY (mobile)
+═══════════════════════════════════════════════════════ -->
+<div id="sidebar-overlay"
+     class="fixed inset-0 bg-black/50 z-20 lg:hidden"
+     onclick="closeSidebar()"></div>
+
+<!-- ═══════════════════════════════════════════════════════
+     APP LAYOUT
+═══════════════════════════════════════════════════════ -->
+<div class="flex h-screen overflow-hidden">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar"
+         class="fixed lg:relative z-30 lg:z-auto h-full flex-shrink-0 w-72
+                dark:bg-gray-900 bg-white border-r dark:border-gray-800 border-gray-200
+                flex flex-col transform -translate-x-full lg:translate-x-0 transition-transform duration-250">
+
+    <!-- Sidebar header -->
+    <div class="p-4 border-b dark:border-gray-800 border-gray-200 flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center flex-shrink-0">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+        </svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="font-semibold text-sm truncate">Atticus</p>
+        <p class="text-xs dark:text-gray-400 text-gray-500" id="sidebar-subtitle">Behavioral Intelligence</p>
+      </div>
+      <button onclick="closeSidebar()" aria-label="Close sidebar" class="lg:hidden dark:text-gray-400 text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 p-1">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- New Chat button -->
+    <div class="p-3">
+      <button onclick="newChat()"
+              class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg
+                     bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium
+                     transition-colors duration-150">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        <span id="btn-new-chat">New Chat</span>
+      </button>
+    </div>
+
+    <!-- Sessions list -->
+    <div class="flex-1 overflow-y-auto px-3 pb-3 space-y-1" id="sessions-list">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Sidebar footer -->
+    <div class="p-3 border-t dark:border-gray-800 border-gray-200 space-y-2">
+      <!-- Mode Toggle -->
+      <div class="flex items-center gap-2">
+        <span class="text-xs dark:text-gray-400 text-gray-500 flex-1" id="lbl-mode">Mode</span>
+        <div class="flex rounded-lg overflow-hidden border dark:border-gray-700 border-gray-300">
+          <button id="mode-btn-smalltalk" onclick="setMode('smalltalk')"
+                  class="mode-pill px-2.5 py-1 text-xs font-medium transition-colors">
+          </button>
+          <button id="mode-btn-professional" onclick="setMode('professional')"
+                  class="mode-pill px-2.5 py-1 text-xs font-medium transition-colors">
+          </button>
+        </div>
+      </div>
+      <!-- Language + Theme row -->
+      <div class="flex items-center gap-2">
+        <button onclick="toggleLang()"
+                class="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg
+                       dark:bg-gray-800 bg-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700
+                       text-xs font-medium transition-colors" id="btn-lang">
+          🌐 <span id="lang-label">EN</span>
+        </button>
+        <button onclick="toggleTheme()" id="btn-theme" aria-label="Toggle theme"
+                class="flex items-center justify-center w-9 h-8 rounded-lg
+                       dark:bg-gray-800 bg-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700
+                       transition-colors">
+          <span id="theme-icon" class="text-sm">☀️</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════════════════════════════════
+       MAIN AREA
+  ═══════════════════════════════════════════════════ -->
+  <main class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+
+    <!-- Top bar -->
+    <header class="flex items-center gap-3 px-4 py-3
+                   dark:bg-gray-900/80 bg-white/80 backdrop-blur
+                   border-b dark:border-gray-800 border-gray-200 flex-shrink-0">
+      <!-- Hamburger (mobile) -->
+      <button onclick="openSidebar()" aria-label="Open sidebar"
+              class="lg:hidden p-1.5 rounded-lg dark:text-gray-400 text-gray-500
+                     hover:dark:bg-gray-800 hover:bg-gray-100 transition-colors flex-shrink-0">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+
+      <!-- Session title -->
+      <div class="flex-1 min-w-0">
+        <h1 class="text-sm font-semibold truncate" id="chat-title">Atticus</h1>
+        <p class="text-xs dark:text-gray-400 text-gray-500" id="chat-subtitle"></p>
+      </div>
+
+      <!-- Mode badge -->
+      <div id="mode-badge"
+           class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium
+                  bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300">
+        <span id="mode-badge-dot" class="w-1.5 h-1.5 rounded-full bg-brand-500"></span>
+        <span id="mode-badge-text"></span>
+      </div>
+    </header>
+
+    <!-- Messages area -->
+    <div id="messages" class="flex-1 overflow-y-auto px-4 py-6 space-y-6">
+      <!-- Welcome message injected by JS -->
+    </div>
+
+    <!-- Terminology panel (shown when Georgian terms detected) -->
+    <div id="terminology-panel"
+         class="hidden mx-4 mb-2 p-3 rounded-xl
+                dark:bg-blue-950/50 bg-blue-50 border dark:border-blue-900/50 border-blue-200">
+      <div class="flex items-center justify-between mb-2">
+        <p class="text-xs font-semibold dark:text-blue-300 text-blue-700" id="lbl-terms-header">📚 Terminology Helper</p>
+        <button onclick="closeTermPanel()"
+                class="text-xs dark:text-blue-400 text-blue-500 hover:underline" id="btn-close-terms">Close</button>
+      </div>
+      <div id="terminology-list" class="flex flex-wrap gap-2"></div>
+    </div>
+
+    <!-- Input area -->
+    <div class="flex-shrink-0 px-4 pb-4 pt-2">
+      <div class="flex items-end gap-2 p-3 rounded-2xl
+                  dark:bg-gray-800 bg-white border dark:border-gray-700 border-gray-300
+                  shadow-lg dark:shadow-black/20 shadow-gray-200/60">
+        <textarea id="user-input"
+                  rows="1"
+                  class="flex-1 bg-transparent outline-none resize-none text-sm
+                         dark:text-gray-100 text-gray-900 dark:placeholder-gray-500 placeholder-gray-400
+                         leading-relaxed py-0.5"
+                  onkeydown="handleKey(event)"
+                  oninput="autoResize(this)"
+                  placeholder="..."></textarea>
+        <button id="send-btn" onclick="sendMessage()" aria-label="Send message"
+                class="flex-shrink-0 w-9 h-9 flex items-center justify-center
+                       rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-40
+                       disabled:cursor-not-allowed text-white transition-colors">
+          <svg id="send-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+          </svg>
+          <!-- Spinner shown while loading -->
+          <svg id="send-spinner" class="hidden w-4 h-4 animate-spin-slow" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+          </svg>
+        </button>
+      </div>
+      <p class="text-center text-xs dark:text-gray-600 text-gray-400 mt-2" id="footer-note">
+        Atticus · Behavioral Intelligence Platform
+      </p>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════════════ -->
+<script>
+/* ================================================================
+   ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗
+  ██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝
+  ██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗
+  ██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║
+  ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝
+   ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝
+  ============================================================
+  CRITICAL: BASE_URL must point to your deployed Replit backend.
+  DO NOT change the /api/chat path — it is matched by the server.
+  ============================================================ */
+
+const BASE_URL = 'https://proxy-gateway--jmikautadze.replit.app'; // Replit deployment URL
+
+/* ================================================================
+   I18N — UI strings in Georgian and English
+================================================================ */
+const I18N = {
+  ka: {
+    newChat:          'ახალი ჩატი',
+    modeLabel:        'რეჟიმი',
+    smalltalk:        'საუბარი',
+    professional:     'ანალიზი',
+    placeholder:      'შეიყვანეთ შეტყობინება...',
+    welcome:          'გამარჯობა! მე ვარ Atticus — Behavioral Intelligence Platform. რით შემიძლია დაგეხმაროთ?',
+    termsHeader:      '📚 ტერმინოლოგიის დამხმარე',
+    closeTerms:       'დახურვა',
+    errorNet:         '⚠️ კავშირის შეცდომა. გთხოვთ, ხელახლა სცადოთ.',
+    errorServer:      '⚠️ სერვერის შეცდომა. გთხოNew.',
+    typing:           'Atticus ფიქრობს...',
+    sessionPrefix:    'საუბარი',
+    deleteSession:    'წაშლა',
+    modeChanged:      'რეჟიმი შეიცვალა: ',
+    chatSubtitle:     'Behavioral Intelligence Platform',
+    sidebarSubtitle:  'ბიჰევიორული ინტელექტი',
+    footerNote:       'Atticus · Behavioral Intelligence Platform',
+  },
+  en: {
+    newChat:          'New Chat',
+    modeLabel:        'Mode',
+    smalltalk:        'Small Talk',
+    professional:     'Analysis',
+    placeholder:      'Type a message...',
+    welcome:          'Hello! I am Atticus — a Behavioral Intelligence Platform. How can I help you today?',
+    termsHeader:      '📚 Terminology Helper',
+    closeTerms:       'Close',
+    errorNet:         '⚠️ Connection error. Please try again.',
+    errorServer:      '⚠️ Server error. Please try again.',
+    typing:           'Atticus is thinking...',
+    sessionPrefix:    'Chat',
+    deleteSession:    'Delete',
+    modeChanged:      'Mode changed: ',
+    chatSubtitle:     'Behavioral Intelligence Platform',
+    sidebarSubtitle:  'Behavioral Intelligence',
+    footerNote:       'Atticus · Behavioral Intelligence Platform',
+  }
+};
+
+/* ================================================================
+   SYSTEM PROMPTS
+================================================================ */
+function buildSystemPrompt(lang, mode, timezone) {
+  const tz = timezone || 'UTC';
+  const prompts = {
+    ka: {
+      smalltalk:    `შენ ხარ Atticus — Behavioral Intelligence Platform. შენი ტონი მეგობრული, თბილი და მხარდამჭერია. ისაუბრე ბუნებრივად, გამოიყენე ქართული ენა. მომხმარებლის timezone: ${tz}. კონვერსაცია არის SmallTalk რეჟიმში — იყავი ადამიანური და ინტუიციური.`,
+      professional: `შენ ხარ Atticus — Behavioral Intelligence Platform-ის პროფესიული ანალიტიკური AI. შენი მიდგომა სტრუქტურირებული, მეთოდური და მტკიცებულებებზე დაფუძნებულია. გამოიყენე ბიჰევიორული, კოგნიტური და ფსიქოლოგიური პრინციპები. ქართულ ტექნიკურ ტერმინებს ინგლისური შესატყვისი დაუმატე სადაც სასარგებლოა. მომხმარებლის timezone: ${tz}.`,
+    },
+    en: {
+      smalltalk:    `You are Atticus — a Behavioral Intelligence Platform. Your tone is warm, friendly, and supportive. Speak naturally and empathetically. User timezone: ${tz}. Mode: Small Talk — be conversational and intuitive.`,
+      professional: `You are Atticus — Behavioral Intelligence Platform in Professional Analysis mode. Your approach is structured, methodical, and evidence-based. Apply behavioral, cognitive, and psychological principles. Provide English equivalents for complex terms where helpful. User timezone: ${tz}.`,
+    }
+  };
+  return prompts[lang][mode];
+}
+
+/* ================================================================
+   TERMINOLOGY DICTIONARY (Georgian → English)
+================================================================ */
+const TERMS = {
+  'ბიჰევიორული':        'behavioral',
+  'კოგნიტური':          'cognitive',
+  'ემოციური ინტელექტი': 'emotional intelligence',
+  'ინტელექტი':          'intelligence',
+  'ალგორითმი':          'algorithm',
+  'ნეირული ქსელი':      'neural network',
+  'მანქანური სწავლება': 'machine learning',
+  'ხელოვნური ინტელექტი':'artificial intelligence',
+  'ფსიქოლოგიური':       'psychological',
+  'ანალიტიკური':        'analytical',
+  'მეტაკოგნიცია':       'metacognition',
+  'ნეიროდივერგენტული':  'neurodivergent',
+  'ემოციური რეგულაცია': 'emotional regulation',
+  'კოგნიტური დამახინჯება': 'cognitive distortion',
+  'ნეიროპლასტიკურობა':  'neuroplasticity',
+  'ჰომეოსტაზი':         'homeostasis',
+  'სოციალური კოგნიცია': 'social cognition',
+  'ემპათია':            'empathy',
+  'ინტუიცია':           'intuition',
+  'ბაიასი':             'bias',
+  'ჰევრისტიკა':         'heuristic',
+  'სტატისტიკური':       'statistical',
+  'კვანტიტატური':       'quantitative',
+  'კვალიტატური':        'qualitative',
+  'ჰიპოთეზა':           'hypothesis',
+  'ემპირიული':          'empirical',
+  'მეთოდოლოგია':        'methodology',
+  'ვალიდობა':           'validity',
+  'რელიაბილობა':        'reliability',
+  'კორელაცია':          'correlation',
+  'კაუზალობა':          'causality',
+  'ფრეიმინგი':          'framing',
+  'ნარატივი':           'narrative',
+  'პარადიგმა':          'paradigm',
+  'სინთეზი':            'synthesis',
+  'დეკომპოზიცია':       'decomposition',
+  'ოპტიმიზაცია':        'optimization',
+  'ეფექტურობა':         'efficiency',
+  'პროდუქტიულობა':      'productivity',
+  'სისტემური':          'systemic',
+  'ჰოლისტური':          'holistic',
+  'ინტეგრირებული':      'integrated',
+  'კომპლექსური':        'complex',
+  'ინტერდისციპლინური':  'interdisciplinary',
+  'ტრანსფერი':          'transfer (learning)',
+  'რეინფორცემენტი':     'reinforcement',
+  'პროტოკოლი':         'protocol',
+  'ინფრასტრუქტურა':    'infrastructure',
+  'ავტომატიზაცია':     'automation',
+  'ინოვაცია':          'innovation',
+  'სტრატეგია':         'strategy',
+  'ტრაუმა':            'trauma',
+  'სტრესი':            'stress',
+  'ადაპტაცია':         'adaptation',
+  'კოგნიცია':          'cognition',
+  'ფუნქციონირება':     'functioning',
+  'პერფორმანსი':       'performance',
+  'ფოკუსი':            'focus',
+  'კონცენტრაცია':      'concentration',
+  'მოტივაცია':         'motivation',
+  'ინჰიბიცია':         'inhibition',
+  'ინტეგრაცია':        'integration',
+  'სეგრეგაცია':        'segregation',
+  'სკრინინგი':         'screening',
+  'დიაგნოსტიკა':       'diagnostics',
+  'ინტერვენცია':       'intervention',
+  'თერაპია':           'therapy',
+  'რეჰაბილიტაცია':     'rehabilitation',
+  'სიმპტომი':          'symptom',
+  'დიაგნოზი':          'diagnosis',
+  'ანამნეზი':          'medical history / anamnesis',
+  'ეთიკა':             'ethics',
+  'მორალი':            'morality',
+  'ფილოსოფია':         'philosophy',
+  'ლოგიკა':            'logic',
+  'რეტორიკა':          'rhetoric',
+  'ეპისტემოლოგია':     'epistemology',
+  'ონტოლოგია':         'ontology',
+  'ფენომენოლოგია':     'phenomenology',
+};
+
+function findTerms(text) {
+  const found = {};
+  for (const [ka, en] of Object.entries(TERMS)) {
+    if (text.includes(ka)) found[ka] = en;
+  }
+  return found;
+}
+
+function showTermPanel(termsObj) {
+  const keys = Object.keys(termsObj);
+  if (keys.length === 0) return;
+  const list = document.getElementById('terminology-list');
+  const panel = document.getElementById('terminology-panel');
+  list.innerHTML = '';
+  keys.forEach(ka => {
+    const chip = document.createElement('div');
+    chip.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ' +
+      'dark:bg-blue-900/60 bg-blue-100 dark:text-blue-200 text-blue-800';
+    chip.innerHTML = `<span class="font-medium">${ka}</span><span class="dark:text-blue-400 text-blue-500">→</span><span>${termsObj[ka]}</span>`;
+    list.appendChild(chip);
+  });
+  panel.classList.remove('hidden');
+}
+
+function closeTermPanel() {
+  document.getElementById('terminology-panel').classList.add('hidden');
+}
+
+/* ================================================================
+   STATE
+================================================================ */
+let state = {
+  lang:      'ka',
+  mode:      'smalltalk',
+  theme:     'dark',
+  timezone:  'UTC',
+  sessionId: null,
+};
+
+/* ================================================================
+   STORAGE UTILITIES
+================================================================ */
+const STORAGE_KEY_SESSIONS  = 'atticus-sessions-v2';
+const STORAGE_KEY_SETTINGS  = 'atticus-settings-v2';
+
+function loadSessions() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY_SESSIONS));
+    if (!Array.isArray(raw)) return [];
+    // Normalize each session to ensure required fields exist
+    return raw.map(s => ({
+      id:        s.id        || generateId(),
+      title:     s.title     || 'Chat',
+      messages:  Array.isArray(s.messages) ? s.messages : [],
+      createdAt: s.createdAt || Date.now(),
+      mode:      ['smalltalk','professional'].includes(s.mode) ? s.mode : 'smalltalk',
+      lang:      ['ka','en'].includes(s.lang) ? s.lang : 'ka',
+    }));
+  } catch { return []; }
+}
+
+function saveSessions(sessions) {
+  try { localStorage.setItem(STORAGE_KEY_SESSIONS, JSON.stringify(sessions)); }
+  catch (e) { console.warn('[Atticus] Could not save sessions:', e); }
+}
+
+function loadSettings() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY_SETTINGS)) || {}; }
+  catch { return {}; }
+}
+
+function saveSettings() {
+  try { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ lang: state.lang, mode: state.mode, theme: state.theme })); }
+  catch (e) { console.warn('[Atticus] Could not save settings:', e); }
+}
+
+/* ================================================================
+   SESSION MANAGEMENT
+================================================================ */
+let sessions = [];
+
+function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function getCurrentSession() {
+  return sessions.find(s => s.id === state.sessionId) || null;
+}
+
+function newChat() {
+  const t = I18N[state.lang];
+  const id = generateId();
+  const session = {
+    id,
+    title: `${t.sessionPrefix} ${sessions.length + 1}`,
+    messages: [],
+    createdAt: Date.now(),
+    mode: state.mode,
+    lang: state.lang,
+  };
+  sessions.unshift(session);
+  state.sessionId = id;
+  saveSessions(sessions);
+  renderSidebar();
+  renderChat();
+  closeSidebar();
+}
+
+function switchSession(id) {
+  if (id === state.sessionId) return;
+  state.sessionId = id;
+  const sess = getCurrentSession();
+  if (sess) {
+    state.mode = sess.mode || state.mode;
+    state.lang = sess.lang || state.lang;
+  }
+  renderModeUI();
+  renderLangUI();
+  renderSidebar();
+  renderChat();
+  closeSidebar();
+}
+
+function deleteSession(id, e) {
+  e.stopPropagation();
+  sessions = sessions.filter(s => s.id !== id);
+  if (state.sessionId === id) {
+    if (sessions.length > 0) {
+      state.sessionId = sessions[0].id;
+    } else {
+      newChat();
+      return;
+    }
+  }
+  saveSessions(sessions);
+  renderSidebar();
+  renderChat();
+}
+
+function updateSessionTitle(id, messages) {
+  const sess = sessions.find(s => s.id === id);
+  if (!sess) return;
+  // Auto-title from first user message
+  if (sess.title.startsWith(I18N.ka.sessionPrefix) || sess.title.startsWith(I18N.en.sessionPrefix)) {
+    const firstUser = messages.find(m => m.role === 'user');
+    if (firstUser) {
+      sess.title = firstUser.content.slice(0, 40) + (firstUser.content.length > 40 ? '…' : '');
+    }
+  }
+  saveSessions(sessions);
+}
+
+/* ================================================================
+   RENDER FUNCTIONS
+================================================================ */
+function t(key) { return I18N[state.lang][key] || key; }
+
+function renderSidebar() {
+  const list = document.getElementById('sessions-list');
+  list.innerHTML = '';
+
+  if (sessions.length === 0) {
+    list.innerHTML = '<p class="text-xs dark:text-gray-600 text-gray-400 text-center py-4">—</p>';
+    return;
+  }
+
+  sessions.forEach(sess => {
+    const isActive = sess.id === state.sessionId;
+    const item = document.createElement('div');
+    item.className = `group flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer
+      text-sm transition-colors duration-100 ${
+        isActive
+          ? 'dark:bg-gray-800 bg-gray-100 dark:text-white text-gray-900'
+          : 'dark:text-gray-400 text-gray-600 hover:dark:bg-gray-800/60 hover:bg-gray-50 hover:dark:text-gray-200 hover:text-gray-800'
+      }`;
+    item.onclick = () => switchSession(sess.id);
+
+    const icon = document.createElement('span');
+    icon.textContent = sess.mode === 'professional' ? '🔬' : '💬';
+    icon.className = 'flex-shrink-0 text-base';
+
+    const titleEl = document.createElement('span');
+    titleEl.className = 'flex-1 min-w-0 truncate text-xs';
+    titleEl.textContent = sess.title;
+
+    const del = document.createElement('button');
+    del.className = 'flex-shrink-0 opacity-0 group-hover:opacity-100 p-0.5 rounded ' +
+      'dark:text-gray-500 text-gray-400 hover:dark:text-red-400 hover:text-red-500 transition-opacity';
+    del.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
+    del.onclick = (e) => deleteSession(sess.id, e);
+    del.title = t('deleteSession');
+
+    item.appendChild(icon);
+    item.appendChild(titleEl);
+    item.appendChild(del);
+    list.appendChild(item);
+  });
+
+  // Update i18n labels
+  document.getElementById('btn-new-chat').textContent = t('newChat');
+  document.getElementById('lbl-mode').textContent = t('modeLabel');
+  document.getElementById('sidebar-subtitle').textContent = t('sidebarSubtitle');
+  document.getElementById('footer-note').textContent = t('footerNote');
+  document.getElementById('lbl-terms-header').textContent = t('termsHeader');
+  document.getElementById('btn-close-terms').textContent = t('closeTerms');
+  document.getElementById('user-input').placeholder = t('placeholder');
+}
+
+function renderModeUI() {
+  const stBtn  = document.getElementById('mode-btn-smalltalk');
+  const prBtn  = document.getElementById('mode-btn-professional');
+  const badge  = document.getElementById('mode-badge-text');
+  const header = document.getElementById('chat-subtitle');
+
+  const activeClass   = 'dark:bg-brand-600 bg-brand-600 text-white';
+  const inactiveClass = 'dark:text-gray-400 text-gray-500 hover:dark:text-gray-200 hover:text-gray-700';
+
+  stBtn.textContent = t('smalltalk');
+  prBtn.textContent = t('professional');
+
+  if (state.mode === 'smalltalk') {
+    stBtn.className = `mode-pill px-2.5 py-1 text-xs font-medium ${activeClass}`;
+    prBtn.className = `mode-pill px-2.5 py-1 text-xs font-medium ${inactiveClass}`;
+    badge.textContent = t('smalltalk');
+  } else {
+    prBtn.className = `mode-pill px-2.5 py-1 text-xs font-medium ${activeClass}`;
+    stBtn.className = `mode-pill px-2.5 py-1 text-xs font-medium ${inactiveClass}`;
+    badge.textContent = t('professional');
+  }
+
+  header.textContent = t('chatSubtitle');
+  document.getElementById('mode-badge').classList.remove('hidden');
+}
+
+function renderLangUI() {
+  document.getElementById('lang-label').textContent = state.lang === 'ka' ? 'ქარ' : 'EN';
+  document.documentElement.lang = state.lang;
+}
+
+function renderChat() {
+  try { closeTermPanel(); } catch {}
+  const sess = getCurrentSession();
+  const messages = (sess && Array.isArray(sess.messages)) ? sess.messages : [];
+  const container = document.getElementById('messages');
+  if (!container) return;
+  container.innerHTML = '';
+
+  // Update chat header title
+  document.getElementById('chat-title').textContent = sess ? sess.title : 'Atticus';
+
+  // Welcome message if empty
+  if (messages.length === 0) {
+    const welcome = document.createElement('div');
+    welcome.className = 'flex items-start gap-3 animate-fade-in max-w-2xl';
+    welcome.innerHTML = `
+      <div class="w-7 h-7 rounded-lg bg-brand-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+        <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+        </svg>
+      </div>
+      <div class="dark:bg-gray-800 bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm max-w-lg">
+        <p class="text-sm dark:text-gray-100 text-gray-800">${t('welcome')}</p>
+      </div>`;
+    container.appendChild(welcome);
+    return;
+  }
+
+  // Render all messages
+  messages.forEach(msg => appendMessageToDOM(msg, false));
+  container.scrollTop = container.scrollHeight;
+}
+
+function appendMessageToDOM(msg, animate = true) {
+  const container = document.getElementById('messages');
+  const isUser = msg.role === 'user';
+
+  const wrapper = document.createElement('div');
+  wrapper.className = `flex items-start gap-3 ${animate ? 'animate-fade-in' : ''} ${isUser ? 'flex-row-reverse' : ''}`;
+
+  // Avatar
+  const avatar = document.createElement('div');
+  if (isUser) {
+    avatar.className = 'w-7 h-7 rounded-lg dark:bg-gray-700 bg-gray-200 flex items-center justify-center flex-shrink-0 mt-0.5 text-sm';
+    avatar.textContent = '👤';
+  } else {
+    avatar.className = 'w-7 h-7 rounded-lg bg-brand-600 flex items-center justify-center flex-shrink-0 mt-0.5';
+    avatar.innerHTML = `<svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+    </svg>`;
+  }
+
+  // Bubble
+  const bubble = document.createElement('div');
+  if (isUser) {
+    bubble.className = 'max-w-xs sm:max-w-md lg:max-w-xl px-4 py-2.5 rounded-2xl rounded-tr-sm ' +
+      'bg-brand-600 text-white text-sm leading-relaxed';
+    bubble.textContent = msg.content;
+  } else {
+    bubble.className = 'max-w-xs sm:max-w-md lg:max-w-2xl px-4 py-3 rounded-2xl rounded-tl-sm ' +
+      'dark:bg-gray-800 bg-white shadow-sm text-sm dark:text-gray-100 text-gray-800 leading-relaxed md-content';
+    try {
+      const raw = marked.parse(msg.content || '');
+      bubble.innerHTML = typeof DOMPurify !== 'undefined'
+        ? DOMPurify.sanitize(raw)
+        : raw;
+    } catch {
+      bubble.textContent = msg.content;
+    }
+
+    // Scan for Georgian terms after AI response
+    if (state.lang === 'ka') {
+      try {
+        const found = findTerms(msg.content);
+        if (Object.keys(found).length > 0) showTermPanel(found);
+      } catch (e) { console.warn('[Atticus] Term scan error:', e); }
+    }
+  }
+
+  wrapper.appendChild(avatar);
+  wrapper.appendChild(bubble);
+  container.appendChild(wrapper);
+  container.scrollTop = container.scrollHeight;
+}
+
+/* ================================================================
+   CHAT LOGIC — Backend communication (DO NOT BREAK THIS)
+   API: POST BASE_URL/api/chat  →  { messages, systemPrompt }
+   Response: { reply: string } | { error: string }
+================================================================ */
+let isLoading = false;
+let typingEl = null;
+
+async function sendMessage() {
+  if (isLoading) return;
+  const input = document.getElementById('user-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  // Ensure a session exists
+  if (!state.sessionId) newChat();
+
+  const sess = getCurrentSession();
+  if (!sess) return;
+  if (!Array.isArray(sess.messages)) sess.messages = [];
+
+  // Append user message
+  const userMsg = { role: 'user', content: text };
+  try { sess.messages.push(userMsg); } catch (e) { console.error('[Atticus] Push error:', e); return; }
+  input.value = '';
+  autoResize(input);
+  try { appendMessageToDOM(userMsg, true); } catch {}
+  try { updateSessionTitle(sess.id, sess.messages); } catch {}
+  try { renderSidebar(); } catch {}
+  try { saveSessions(sessions); } catch {}
+  try { closeTermPanel(); } catch {}
+
+  // Show typing indicator
+  setLoading(true);
+
+  try {
+    // Build system prompt with current lang, mode, and timezone
+    const systemPrompt = buildSystemPrompt(state.lang, state.mode, state.timezone);
+
+    // ═══════════════════════════════════════════════════════
+    // CRITICAL: This is the exact API contract with the backend.
+    // DO NOT modify the structure of this request.
+    // ═══════════════════════════════════════════════════════
+    const response = await fetch(`${BASE_URL}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages:     sess.messages.filter(m => m.role !== 'system'),
+        systemPrompt: systemPrompt,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data.error) {
+      throw new Error(data.error);
+    }
+
+    const reply = data.reply || '';
+    const aiMsg = { role: 'assistant', content: reply };
+    sess.messages.push(aiMsg);
+    saveSessions(sessions);
+
+    removeTyping();
+    appendMessageToDOM(aiMsg, true);
+
+  } catch (err) {
+    console.error('[Atticus] Chat error:', err);
+    removeTyping();
+    const isNetErr = err instanceof TypeError && err.message.includes('fetch');
+    showError(isNetErr ? t('errorNet') : t('errorServer'));
+  } finally {
+    setLoading(false);
+  }
+}
+
+function setLoading(val) {
+  isLoading = val;
+  const btn     = document.getElementById('send-btn');
+  const icon    = document.getElementById('send-icon');
+  const spinner = document.getElementById('send-spinner');
+  btn.disabled  = val;
+  icon.classList.toggle('hidden', val);
+  spinner.classList.toggle('hidden', !val);
+
+  if (val) {
+    showTyping();
+  }
+}
+
+function showTyping() {
+  const container = document.getElementById('messages');
+  typingEl = document.createElement('div');
+  typingEl.id = 'typing-indicator';
+  typingEl.className = 'flex items-start gap-3 animate-fade-in';
+  typingEl.innerHTML = `
+    <div class="w-7 h-7 rounded-lg bg-brand-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+      <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+      </svg>
+    </div>
+    <div class="px-4 py-3 rounded-2xl rounded-tl-sm dark:bg-gray-800 bg-white shadow-sm">
+      <div class="flex gap-1 items-center">
+        <div class="typing-dot w-2 h-2 rounded-full dark:bg-gray-400 bg-gray-500"></div>
+        <div class="typing-dot w-2 h-2 rounded-full dark:bg-gray-400 bg-gray-500"></div>
+        <div class="typing-dot w-2 h-2 rounded-full dark:bg-gray-400 bg-gray-500"></div>
+      </div>
+    </div>`;
+  container.appendChild(typingEl);
+  container.scrollTop = container.scrollHeight;
+}
+
+function removeTyping() {
+  if (typingEl) { typingEl.remove(); typingEl = null; }
+}
+
+function showError(msg) {
+  const container = document.getElementById('messages');
+  const el = document.createElement('div');
+  el.className = 'text-center animate-fade-in';
+  el.innerHTML = `<span class="inline-block px-3 py-1.5 rounded-lg text-xs
+    dark:bg-red-950/60 bg-red-50 dark:text-red-300 text-red-600
+    border dark:border-red-900/50 border-red-200">${msg}</span>`;
+  container.appendChild(el);
+  container.scrollTop = container.scrollHeight;
+}
+
+/* ================================================================
+   SETTINGS: MODE, LANGUAGE, THEME
+================================================================ */
+function setMode(mode) {
+  state.mode = mode;
+  const sess = getCurrentSession();
+  if (sess) { sess.mode = mode; saveSessions(sessions); }
+  renderModeUI();
+  saveSettings();
+}
+
+function toggleLang() {
+  state.lang = state.lang === 'ka' ? 'en' : 'ka';
+  const sess = getCurrentSession();
+  if (sess) { sess.lang = state.lang; saveSessions(sessions); }
+  renderLangUI();
+  renderModeUI();
+  renderSidebar();
+  renderChat();
+  saveSettings();
+}
+
+function toggleTheme() {
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  applyTheme();
+  saveSettings();
+}
+
+function applyTheme() {
+  if (state.theme === 'dark') {
+    document.documentElement.classList.add('dark');
+    document.getElementById('theme-icon').textContent = '☀️';
+  } else {
+    document.documentElement.classList.remove('dark');
+    document.getElementById('theme-icon').textContent = '🌙';
+  }
+}
+
+/* ================================================================
+   SIDEBAR (mobile open/close)
+================================================================ */
+function openSidebar() {
+  document.getElementById('sidebar').classList.remove('-translate-x-full');
+  document.getElementById('sidebar-overlay').classList.add('active');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.add('-translate-x-full');
+  document.getElementById('sidebar-overlay').classList.remove('active');
+}
+
+/* ================================================================
+   INPUT HELPERS
+================================================================ */
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+}
+
+/* ================================================================
+   MARKED CONFIG
+================================================================ */
+try {
+  marked.setOptions({ breaks: true, gfm: true });
+} catch (e) { console.warn('[Atticus] marked config error:', e); }
+
+/* ================================================================
+   INIT
+================================================================ */
+(function init() {
+  try {
+    // Detect timezone
+    try {
+      state.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+    } catch { state.timezone = 'UTC'; }
+
+    // Load persisted settings
+    const saved = loadSettings();
+    if (saved.lang  && ['ka','en'].includes(saved.lang))                state.lang  = saved.lang;
+    if (saved.mode  && ['smalltalk','professional'].includes(saved.mode)) state.mode  = saved.mode;
+    if (saved.theme && ['dark','light'].includes(saved.theme))           state.theme = saved.theme;
+
+    applyTheme();
+
+    // Load sessions
+    sessions = loadSessions();
+    if (sessions.length > 0) {
+      state.sessionId = sessions[0].id;
+      const sess = sessions[0];
+      if (sess.mode) state.mode = sess.mode;
+      if (sess.lang) state.lang = sess.lang;
+    } else {
+      // Create first session
+      const id = generateId();
+      const sess = {
+        id,
+        title: `${I18N[state.lang].sessionPrefix} 1`,
+        messages: [],
+        createdAt: Date.now(),
+        mode: state.mode,
+        lang: state.lang,
+      };
+      sessions.push(sess);
+      state.sessionId = id;
+      saveSessions(sessions);
+    }
+
+    renderLangUI();
+    renderModeUI();
+    renderSidebar();
+    renderChat();
+
+    // Focus input
+    try { document.getElementById('user-input').focus(); } catch {}
+
+  } catch (e) {
+    console.error('[Atticus] Init error:', e);
+    // Fail gracefully — core layout is still rendered by HTML
+  }
+})();
+</script>
+</body>
+</html>
